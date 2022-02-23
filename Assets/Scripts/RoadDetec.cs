@@ -9,7 +9,7 @@ public class RoadDetec : MonoBehaviour
     {
         if (other.gameObject.tag == "RoadTrigger")
         {
-            Destroy(other.gameObject);
+            Destroy(other.gameObject.transform.parent.gameObject);
 
         }
 
