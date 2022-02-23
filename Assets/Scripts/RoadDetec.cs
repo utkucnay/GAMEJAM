@@ -9,7 +9,6 @@ public class RoadDetec : MonoBehaviour
     {
         if (other.gameObject.tag == "RoadTrigger")
         {
-            
             other.gameObject.transform.parent.gameObject.transform.position += new Vector3(0,0,2*Distance);
         }
     }
