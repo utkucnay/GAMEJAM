@@ -4,25 +4,28 @@ using UnityEngine;
 
 public class CharMovement : MonoBehaviour
 {
-    public enum stage
+    enum stage
     {
         mid,
         left,
         right
     };
-    public stage currentstage;
-
-    float m_lastPressed;
+    stage currentstage;
 
     public Transform MidLoc;
     public Transform LeftLoc;
     public Transform RightLoc;
 
-    public int CharSpeed;
+    float timeLimit;
+    float pastTime;
+
+    public float CharSpeed;
     public float CharSpeedMultiplier;
     private void Start()
     {
         currentstage = stage.mid;
+        timeLimit = 10;
+        pastTime = 0;
     }
     private void Update()
     {
@@ -61,6 +64,11 @@ public class CharMovement : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        if (Time.fixedTime - pastTime > timeLimit)
+        {
+            pastTime = Time.fixedTime;
+            //CharSpeedMultiplier = pastTime / 500;
+        }
         transform.position += new Vector3(0, 0, CharSpeed * CharSpeedMultiplier);
     }
 }
