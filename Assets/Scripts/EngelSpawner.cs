@@ -8,8 +8,12 @@ public class EngelSpawner : MonoBehaviour
     
     void Start()
     {
-        //InvokeRepeating();
-        Instantiate(Engel,gameObject.transform.position, Quaternion.identity);
+        InvokeRepeating("EngelYarat",2f,3f);
+        
     }
    
+    void EngelYarat()
+    {
+        Instantiate(Engel, gameObject.transform.position, Quaternion.identity);
+    }
 }

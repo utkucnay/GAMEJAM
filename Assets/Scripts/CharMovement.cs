@@ -57,7 +57,6 @@ public class CharMovement : MonoBehaviour
                     transform.position = RightLoc.position;
                     break;
             }
-
         }
     }
     private void FixedUpdate()
