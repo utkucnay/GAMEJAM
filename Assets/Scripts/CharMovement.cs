@@ -16,6 +16,7 @@ public class CharMovement : MonoBehaviour
     bool Lock;
     bool LeftMovement;
     bool RightMovement;
+    bool ForwardMovement;
 
     Rigidbody rb;
     [SerializeField]
@@ -82,6 +83,10 @@ public class CharMovement : MonoBehaviour
                     break;
             }
         }
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            GobekAtma();
+        }
         ForceLocation();
     }
 
@@ -90,7 +95,7 @@ public class CharMovement : MonoBehaviour
         if (LeftMovement)
         {
             
-            transform.position = Vector3.MoveTowards(transform.position,new Vector3(tmp,LeftLoc.position.y,LeftLoc.position.z),0.5f);
+            transform.position = Vector3.MoveTowards(transform.position,new Vector3(tmp,LeftLoc.position.y,LeftLoc.position.z),0.1f);
             if (tmp == transform.position.x)
             {
                 Lock = false;
@@ -99,11 +104,20 @@ public class CharMovement : MonoBehaviour
         }
         if (RightMovement)
         {
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(tmp, RightLoc.position.y, RightLoc.position.z), 0.5f);
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(tmp, RightLoc.position.y, RightLoc.position.z), 0.1f);
             if (tmp == transform.position.x)
             {
                 Lock = false;
                 RightMovement = false;
+            }
+        }
+        if (ForwardMovement)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, transform.position.z+10), 0.1f);
+            if (tmp <= transform.position.z)
+            {
+                Lock = false;
+                ForwardMovement = false;
             }
         }
     }
@@ -117,5 +131,12 @@ public class CharMovement : MonoBehaviour
         }
         transform.position += new Vector3(0, 0, CharSpeed * CharSpeedMultiplier);
         
+    }
+
+    public void GobekAtma()
+    {
+        ForwardMovement = true;
+        Lock = true;
+        tmp = transform.position.z + 10;
     }
 }
