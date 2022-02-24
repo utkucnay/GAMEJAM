@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class EngelDetec : MonoBehaviour
 {
+    public CharMovement charMovement;
+    private void Start()
+    {
+        charMovement = gameObject.GetComponent<CharMovement>();
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Yemek")
@@ -13,8 +18,16 @@ public class EngelDetec : MonoBehaviour
         }
         if (other.gameObject.tag == "Engel")
         {
-            Time.timeScale = 0;
-            Debug.Log("Oyunu Bitir");
+            if (charMovement.GetForwardMovement())
+            {
+                Destroy(other.gameObject);
+            }
+            else
+            {
+                Time.timeScale = 0;
+                Debug.Log("Oyunu Bitir");
+                charMovement.SetLock();
+            }
         }
     }
 }

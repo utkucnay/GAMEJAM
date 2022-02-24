@@ -13,6 +13,8 @@ public class CharMovement : MonoBehaviour
 
     public float tmp;
 
+    public GameObject Camera;
+
     bool Lock;
     bool LeftMovement;
     bool RightMovement;
@@ -41,6 +43,17 @@ public class CharMovement : MonoBehaviour
         Lock = false;
         RightMovement = false;
     }
+
+    public bool GetForwardMovement()
+    {
+        return ForwardMovement;
+    }
+
+    public void SetLock()
+    {
+        Lock = true;
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.A) && !Lock)
@@ -118,6 +131,7 @@ public class CharMovement : MonoBehaviour
             {
                 Lock = false;
                 ForwardMovement = false;
+                Camera.GetComponent<FollowPlayer>().Move = true ;
             }
         }
     }
@@ -135,6 +149,7 @@ public class CharMovement : MonoBehaviour
 
     public void GobekAtma()
     {
+        Camera.GetComponent<FollowPlayer>().Lock = true;
         ForwardMovement = true;
         Lock = true;
         tmp = transform.position.z + 10;
