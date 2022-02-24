@@ -11,7 +11,7 @@ public class FollowPlayer : MonoBehaviour
         Distance = transform.position - FollowObject.transform.position;
     }
 
-    void FixedUpdate()
+    void Update()
     { 
         transform.position = Distance + FollowObject.transform.position;
     }
