@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class EngelDetec : MonoBehaviour
 {
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.tag=="Engel")
+        if (other.gameObject.tag == "Yemek")
         {
-            //Todo
+            //Todo Kilo Artýrma
+            Destroy(other.gameObject);
+        }
+        if (other.gameObject.tag == "Engel")
+        {
+            Time.timeScale = 0;
             Debug.Log("Oyunu Bitir");
         }
     }
