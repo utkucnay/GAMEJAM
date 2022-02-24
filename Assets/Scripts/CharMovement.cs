@@ -10,6 +10,15 @@ public class CharMovement : MonoBehaviour
         left,
         right
     };
+
+    public float tmp;
+
+    bool Lock;
+    bool LeftMovement;
+    bool RightMovement;
+
+    Rigidbody rb;
+    [SerializeField]
     stage currentstage;
 
     public Transform MidLoc;
@@ -23,45 +32,82 @@ public class CharMovement : MonoBehaviour
     public float CharSpeedMultiplier;
     private void Start()
     {
+        rb = GetComponent<Rigidbody>();
         currentstage = stage.mid;
         timeLimit = 10;
         pastTime = 0;
+        LeftMovement = false;
+        Lock = false;
+        RightMovement = false;
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.A) && !Lock)
         {
             switch (currentstage)
             {
                 case stage.mid:
+                    LeftMovement = true;
+                    Lock = true;
+                    tmp = LeftLoc.position.x;
                     currentstage = stage.left;
-                    transform.position = LeftLoc.position;
                     break;
                 case stage.left:
                     break;
                 case stage.right:
+                    LeftMovement = true;
+                    Lock = true;
+                    tmp = LeftLoc.position.x;
                     currentstage = stage.mid;
-                    transform.position = LeftLoc.position;
                     break;
             }
         }
-        if (Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.D) && !Lock)
         {
             switch (currentstage)
             {
                 case stage.mid:
+                    RightMovement = true;
+                    Lock = true;
+                    tmp = RightLoc.position.x;
                     currentstage = stage.right;
-                    transform.position = RightLoc.position;
                     break;
                 case stage.right:
                     break;
                 case stage.left:
+                    RightMovement = true;
+                    Lock = true;
+                    tmp = RightLoc.position.x;
                     currentstage = stage.mid;
-                    transform.position = RightLoc.position;
                     break;
+            }
+        }
+        ForceLocation();
+    }
+
+    private void ForceLocation()
+    {
+        if (LeftMovement)
+        {
+            
+            transform.position = Vector3.MoveTowards(transform.position,new Vector3(tmp,LeftLoc.position.y,LeftLoc.position.z),0.5f);
+            if (tmp == transform.position.x)
+            {
+                Lock = false;
+                LeftMovement = false;
+            }
+        }
+        if (RightMovement)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(tmp, RightLoc.position.y, RightLoc.position.z), 0.5f);
+            if (tmp == transform.position.x)
+            {
+                Lock = false;
+                RightMovement = false;
             }
         }
     }
+
     private void FixedUpdate()
     {
         if (Time.fixedTime - pastTime > timeLimit)
@@ -70,5 +116,6 @@ public class CharMovement : MonoBehaviour
             //CharSpeedMultiplier = pastTime / 500;
         }
         transform.position += new Vector3(0, 0, CharSpeed * CharSpeedMultiplier);
+        
     }
 }
