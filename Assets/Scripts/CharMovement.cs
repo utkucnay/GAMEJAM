@@ -96,7 +96,7 @@ public class CharMovement : MonoBehaviour
                     break;
             }
         }
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.W) && !Lock)
         {
             GobekAtma();
         }

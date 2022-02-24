@@ -510,7 +510,7 @@ MonoBehaviour:
   LeftLoc: {fileID: 653114347}
   RightLoc: {fileID: 1720173715}
   CharSpeed: 1
-  CharSpeedMultiplier: 0.05
+  CharSpeedMultiplier: 0.1
 --- !u!114 &743495209
 MonoBehaviour:
   m_ObjectHideFlags: 0
