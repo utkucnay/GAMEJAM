@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class EngelDetec : MonoBehaviour
 {
+    Animator animator;
     public CharMovement charMovement;
+    
     private void Start()
     {
+        animator = GetComponent<Animator>();
         charMovement = gameObject.GetComponent<CharMovement>();
     }
     private void OnTriggerEnter(Collider other)
@@ -24,7 +27,8 @@ public class EngelDetec : MonoBehaviour
             }
             else
             {
-                Time.timeScale = 0;
+                animator.SetBool("Lock",true);
+                charMovement.SetSpeed(0);
                 Debug.Log("Oyunu Bitir");
                 charMovement.SetLock();
             }

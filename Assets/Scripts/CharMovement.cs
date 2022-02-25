@@ -21,7 +21,8 @@ public class CharMovement : MonoBehaviour
     bool ForwardMovement;
 
     Rigidbody rb;
-    [SerializeField]
+    Animator animator;
+
     stage currentstage;
 
     public Transform MidLoc;
@@ -36,12 +37,18 @@ public class CharMovement : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();   
         currentstage = stage.mid;
         timeLimit = 10;
         pastTime = 0;
         LeftMovement = false;
         Lock = false;
         RightMovement = false;
+    }
+
+    public void SetSpeed(float speed)
+    {
+        CharSpeed = speed;
     }
 
     public bool GetForwardMovement()
@@ -61,6 +68,7 @@ public class CharMovement : MonoBehaviour
             switch (currentstage)
             {
                 case stage.mid:
+                    animator.SetBool("Left",true);
                     LeftMovement = true;
                     Lock = true;
                     tmp = LeftLoc.position.x;
@@ -69,6 +77,7 @@ public class CharMovement : MonoBehaviour
                 case stage.left:
                     break;
                 case stage.right:
+                    animator.SetBool("Left", true);
                     LeftMovement = true;
                     Lock = true;
                     tmp = LeftLoc.position.x;
@@ -81,6 +90,7 @@ public class CharMovement : MonoBehaviour
             switch (currentstage)
             {
                 case stage.mid:
+                    animator.SetBool("Right", true);
                     RightMovement = true;
                     Lock = true;
                     tmp = RightLoc.position.x;
@@ -89,6 +99,7 @@ public class CharMovement : MonoBehaviour
                 case stage.right:
                     break;
                 case stage.left:
+                    animator.SetBool("Right", true);
                     RightMovement = true;
                     Lock = true;
                     tmp = RightLoc.position.x;
@@ -108,18 +119,20 @@ public class CharMovement : MonoBehaviour
         if (LeftMovement)
         {
             
-            transform.position = Vector3.MoveTowards(transform.position,new Vector3(tmp,LeftLoc.position.y,LeftLoc.position.z),0.1f);
+            transform.position = Vector3.MoveTowards(transform.position,new Vector3(tmp,LeftLoc.position.y,LeftLoc.position.z),0.05f);
             if (tmp == transform.position.x)
             {
+                animator.SetBool("Left", false);
                 Lock = false;
                 LeftMovement = false;
             }
         }
         if (RightMovement)
         {
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(tmp, RightLoc.position.y, RightLoc.position.z), 0.1f);
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(tmp, RightLoc.position.y, RightLoc.position.z), 0.05f);
             if (tmp == transform.position.x)
             {
+                animator.SetBool("Right", false);
                 Lock = false;
                 RightMovement = false;
             }
@@ -129,6 +142,7 @@ public class CharMovement : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, transform.position.z+10), 0.1f);
             if (tmp <= transform.position.z)
             {
+                animator.SetBool("Gobek", false);
                 Lock = false;
                 ForwardMovement = false;
                 Camera.GetComponent<FollowPlayer>().Move = true ;
@@ -149,6 +163,7 @@ public class CharMovement : MonoBehaviour
 
     public void GobekAtma()
     {
+        animator.SetBool("Gobek", true);
         Camera.GetComponent<FollowPlayer>().Lock = true;
         ForwardMovement = true;
         Lock = true;
