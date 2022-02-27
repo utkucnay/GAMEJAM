@@ -16,7 +16,7 @@ public class DusmeBeh : StateMachineBehaviour
     {
         if (stateInfo.IsTag("Dusme"))
         {
-            charMovement.SetSpeed(-1);
+            charMovement.SetSpeed(-1f);
         }
         
     }
@@ -27,7 +27,7 @@ public class DusmeBeh : StateMachineBehaviour
         if (stateInfo.IsTag("Dusme"))
         {
             charMovement.SetSpeed(0);
-            Time.timeScale = 0;
+          
         }
     }
 

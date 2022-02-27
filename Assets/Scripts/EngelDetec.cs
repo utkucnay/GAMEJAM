@@ -6,6 +6,8 @@ public class EngelDetec : MonoBehaviour
 {
     Animator animator;
     public CharMovement charMovement;
+    public float BuyumeDerecesi;
+    public GameObject ParcalnmýsTabak;
     
     private void Start()
     {
@@ -16,7 +18,7 @@ public class EngelDetec : MonoBehaviour
     {
         if (other.gameObject.tag == "Yemek")
         {
-            //Todo Kilo Artýrma
+            this.gameObject.transform.localScale += new Vector3(BuyumeDerecesi, BuyumeDerecesi, BuyumeDerecesi); 
             Destroy(other.gameObject);
         }
         if (other.gameObject.tag == "Engel")
@@ -24,6 +26,7 @@ public class EngelDetec : MonoBehaviour
             if (charMovement.GetForwardMovement())
             {
                 Destroy(other.gameObject);
+                Instantiate(ParcalnmýsTabak,other.gameObject.transform.position,Quaternion.identity);
             }
             else
             {
@@ -32,6 +35,12 @@ public class EngelDetec : MonoBehaviour
                 Debug.Log("Oyunu Bitir");
                 charMovement.SetLock();
             }
+        }
+        if (other.gameObject.tag =="Finish")
+        {
+            charMovement.SetLock();
+            animator.SetBool("Sevinc",true);
+            charMovement.SetSpeed(0);
         }
     }
 }

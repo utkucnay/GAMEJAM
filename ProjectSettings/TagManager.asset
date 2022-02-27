@@ -7,6 +7,9 @@ TagManager:
   - RoadTrigger
   - Engel
   - Yemek
+  - Death
+  - UI
+  - UIFailed
   layers:
   - Default
   - TransparentFX
