@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 public class CharMovement : MonoBehaviour
 {
     enum stage
@@ -11,13 +12,13 @@ public class CharMovement : MonoBehaviour
         right
     };
 
+
+
     public float tmp;
 
     public GameObject Camera;
 
     bool Lock;
-    bool LeftMovement;
-    bool RightMovement;
     bool ForwardMovement;
 
     Rigidbody rb;
@@ -25,30 +26,59 @@ public class CharMovement : MonoBehaviour
 
     stage currentstage;
 
+    float y;
+
+    public GameObject Failed;
+
     public Transform MidLoc;
     public Transform LeftLoc;
     public Transform RightLoc;
+
+    public GameObject Winner;
 
     float timeLimit;
     float pastTime;
 
     public float CharSpeed;
     public float CharSpeedMultiplier;
+
+    public float KuculmeDerecesi;
+    public float BuyumeDerecesi;
+    public GameObject ParcalnmýsTabak;
+
+    public Text AgirlikText;
+    int Agirlik;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        animator = GetComponent<Animator>();   
+        animator = GetComponent<Animator>();
         currentstage = stage.mid;
         timeLimit = 10;
         pastTime = 0;
-        LeftMovement = false;
         Lock = false;
-        RightMovement = false;
+        Agirlik = 130;
+        AgirlikText.text = Agirlik + " lbs";
+        Lock = true;
     }
 
     public void SetSpeed(float speed)
     {
         CharSpeed = speed;
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void NextLevel()
+    {
+        if (SceneManager.GetActiveScene().buildIndex < 1)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
+        
     }
 
     public bool GetForwardMovement()
@@ -61,112 +91,126 @@ public class CharMovement : MonoBehaviour
         Lock = true;
     }
 
+    public void SetFalseLock()
+    {
+        Lock = false;
+    }
+
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A) && !Lock)
+        animator.SetBool("Right", false);
+        animator.SetBool("Left", false);
+        if (Input.GetKey(KeyCode.A) && !Lock)
         {
-            switch (currentstage)
-            {
-                case stage.mid:
-                    animator.SetBool("Left",true);
-                    LeftMovement = true;
-                    Lock = true;
-                    tmp = LeftLoc.position.x;
-                    currentstage = stage.left;
-                    break;
-                case stage.left:
-                    break;
-                case stage.right:
-                    animator.SetBool("Left", true);
-                    LeftMovement = true;
-                    Lock = true;
-                    tmp = LeftLoc.position.x;
-                    currentstage = stage.mid;
-                    break;
-            }
+            Movement(-0.1f);
+
         }
-        if (Input.GetKeyDown(KeyCode.D) && !Lock)
+        if (Input.GetKey(KeyCode.D) && !Lock)
         {
-            switch (currentstage)
-            {
-                case stage.mid:
-                    animator.SetBool("Right", true);
-                    RightMovement = true;
-                    Lock = true;
-                    tmp = RightLoc.position.x;
-                    currentstage = stage.right;
-                    break;
-                case stage.right:
-                    break;
-                case stage.left:
-                    animator.SetBool("Right", true);
-                    RightMovement = true;
-                    Lock = true;
-                    tmp = RightLoc.position.x;
-                    currentstage = stage.mid;
-                    break;
-            }
+            Movement(0.1f);
         }
         if (Input.GetKeyDown(KeyCode.W) && !Lock)
         {
             GobekAtma();
         }
-        ForceLocation();
+        AgirlikText.text = Agirlik + " lbs";
+    }
+
+    public void SetStart()
+    {
+        animator.SetBool("Start", false);
+    }
+
+    public void Movement(float x)
+    {
+        if (x > 0)
+        {
+            animator.SetBool("Right",true);
+        }
+        else
+        {
+            animator.SetBool("Left", true);
+        }
+        transform.position += new Vector3(x, 0, 0);
     }
 
     private void ForceLocation()
     {
-        if (LeftMovement)
-        {
-            
-            transform.position = Vector3.MoveTowards(transform.position,new Vector3(tmp,LeftLoc.position.y,LeftLoc.position.z),0.05f);
-            if (tmp == transform.position.x)
-            {
-                animator.SetBool("Left", false);
-                Lock = false;
-                LeftMovement = false;
-            }
-        }
-        if (RightMovement)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(tmp, RightLoc.position.y, RightLoc.position.z), 0.05f);
-            if (tmp == transform.position.x)
-            {
-                animator.SetBool("Right", false);
-                Lock = false;
-                RightMovement = false;
-            }
-        }
         if (ForwardMovement)
         {
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, transform.position.z+10), 0.1f);
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, transform.position.z + 10), 0.5f);
             if (tmp <= transform.position.z)
             {
+
                 animator.SetBool("Gobek", false);
                 Lock = false;
                 ForwardMovement = false;
-                Camera.GetComponent<FollowPlayer>().Move = true ;
+                Camera.GetComponent<FollowPlayer>().Move = true;
             }
         }
     }
 
     private void FixedUpdate()
     {
-        if (Time.fixedTime - pastTime > timeLimit)
-        {
-            pastTime = Time.fixedTime;
-            //CharSpeedMultiplier = pastTime / 500;
-        }
         transform.position += new Vector3(0, 0, CharSpeed * CharSpeedMultiplier);
-        
+        ForceLocation();
     }
 
     public void GobekAtma()
     {
-        animator.SetBool("Gobek", true);
-        Camera.GetComponent<FollowPlayer>().Lock = true;
-        ForwardMovement = true;
-        Lock = true;
-        tmp = transform.position.z + 10;
+        if (this.gameObject.transform.localScale.x > 0.12f)
+        {
+            Agirlik -= 10;
+            this.gameObject.transform.localScale -= new Vector3(KuculmeDerecesi, KuculmeDerecesi, KuculmeDerecesi);
+            animator.SetBool("Gobek", true);
+            Camera.GetComponent<FollowPlayer>().Lock = true;
+            ForwardMovement = true;
+            Lock = true;
+            tmp = transform.position.z + 10;
+        }
+        
+    }
+
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Yemek")
+        {
+            other.GetComponent<AudioSource>().Play();
+            Agirlik += 5; 
+            this.gameObject.transform.localScale += new Vector3(BuyumeDerecesi, BuyumeDerecesi, BuyumeDerecesi);
+            other.gameObject.GetComponent<MeshRenderer>().enabled = false;
+            Destroy(other.gameObject,1f);
+        }
+        if (other.gameObject.tag == "Engel")
+        {
+            if (GetForwardMovement())
+            {
+                Destroy(other.gameObject);
+                Destroy(Instantiate(ParcalnmýsTabak, other.gameObject.transform.position, Quaternion.identity),2f);
+            }
+            else
+            {
+                Failed.SetActive(true);
+                animator.SetBool("Lock", true);
+                SetSpeed(0);
+                SetLock();
+            }
+        }
+        if (other.gameObject.tag == "Death")
+        {
+            Failed.SetActive(true);
+            animator.SetBool("Death", true);
+            SetSpeed(0);
+            SetLock();
+        }
+        if (other.gameObject.tag == "Finish")
+        {
+            Winner.SetActive(true);
+            SetLock();
+            animator.SetBool("Sevinc", true);
+            SetSpeed(0);
+        }
     }
 }
